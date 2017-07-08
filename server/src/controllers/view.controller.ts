@@ -1,4 +1,3 @@
-
 import { Controller, Render, Get } from 'routing-controllers';
 
 /**

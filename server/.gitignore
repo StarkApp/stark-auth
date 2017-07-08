@@ -29,3 +29,6 @@ Thumbs.db
 
 # Ignore built ts files
 dist/**/*
+
+# RethinkDB
+rethinkdb_data

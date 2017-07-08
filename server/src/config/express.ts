@@ -1,3 +1,4 @@
+import { rethinkDB } from './rethinkdb';
 import * as express from 'express';
 import * as path from 'path';
 import * as compression from 'compression';
@@ -11,7 +12,7 @@ import * as passport from 'passport';
 import * as flash from 'express-flash';
 import * as dotenv from 'dotenv';
 
-export let bootstrap = (): express.Express => {
+export let bootstrap = (): void => {
 
     //  Load environment variables from .env file, where API keys and passwords are configured.
     dotenv.config({ path: '.env' });
@@ -41,29 +42,30 @@ export let bootstrap = (): express.Express => {
         secret: process.env.SESSION_SECRET
     }));
 
-    // Authentication (Passport) configuration
-    app.use(passport.initialize());
-    app.use(passport.session());
+    // RethinkDB configuration
+    rethinkDB().then(() => {
+        // Authentication (Passport) configuration
+        app.use(passport.initialize());
+        app.use(passport.session());
 
-    // Security configuration
-    app.use(flash());
+        // Security configuration
+        app.use(flash());
 
-    // Static assets configuration
-    app.use(express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 }));
+        // Static assets configuration
+        app.use(express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 }));
 
-    // Error Handler. Provides full stack - remove for production
-    app.use(errorHandler());
+        // Error Handler. Provides full stack - remove for production
+        app.use(errorHandler());
 
-    app.listen(process.env.PORT || 3000, () => {
-        console.log('   _____ __             __      ___         __  __');
-        console.log('  / ___// /_____ ______/ /__   /   | __  __/ /_/ /_ ');
-        console.log('  \\__ \\/ __/ __ `/ ___/ //_/  / /| |/ / / / __/ __ \\');
-        console.log(' ___/ / /_/ /_/ / /  / ,<    / ___ / /_/ / /_/ / / /');
-        console.log('/____/\\__/\\__,_/_/  /_/|_|  /_/  |_\\__,_/\\__/_/ /_/');
-        console.log(`Bound to port ${app.get('port')} in ${app.get('env')} mode`);
-        console.log('Press CTRL-C to stop\n');
+        app.listen(process.env.PORT || 3000, () => {
+            console.log('   _____ __             __      ___         __  __');
+            console.log('  / ___// /_____ ______/ /__   /   | __  __/ /_/ /_ ');
+            console.log('  \\__ \\/ __/ __ `/ ___/ //_/  / /| |/ / / / __/ __ \\');
+            console.log(' ___/ / /_/ /_/ / /  / ,<    / ___ / /_/ / /_/ / / /');
+            console.log('/____/\\__/\\__,_/_/  /_/|_|  /_/  |_\\__,_/\\__/_/ /_/');
+            console.log(`Bound to port ${app.get('port')} in ${app.get('env')} mode`);
+            console.log('Press CTRL-C to stop\n');
+        });
     });
-
-    return app;
 
 };

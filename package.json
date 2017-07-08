@@ -1,0 +1,8 @@
+{
+    "name": "stark-auth",
+    "private": true,
+    "scripts": {
+        "start": "npm run start.server",
+        "start.server": "cd server && npm i && npm run start"
+    }
+}
