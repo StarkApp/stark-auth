@@ -32,3 +32,6 @@ dist/**/*
 
 # RethinkDB
 rethinkdb_data
+
+# Generated Angular files
+public/
