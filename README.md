@@ -4,7 +4,8 @@ Seamless authentication gateway integration with passport. Allows microservices 
 ## Getting Started
 1. Duplicate `.env.example` from the `/server` directory and rename it to `.env`
 2. Update configurations to match your database set-up and server configuration.
-3. Run `npm start` to install required dependencies and bootstrap server.
+3. Build the front-end using the Angular-CLI from the `client` directory.
+4. Run `npm start` to install required dependencies and bootstrap server.
 
 ### Integration Guide
 - _Coming Soon_

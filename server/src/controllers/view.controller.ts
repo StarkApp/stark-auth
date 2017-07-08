@@ -9,9 +9,5 @@ export class ViewController {
 
     @Get()
     @Render('index.html')
-    index() {
-        return {
-            title: 'Testing This'
-        };
-    }
+    index() { }
 }

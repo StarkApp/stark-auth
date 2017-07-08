@@ -25,7 +25,7 @@ export let bootstrap = (): void => {
     });
 
     // View engine configuration
-    app.set('views', path.join(__dirname, '../../views'));
+    app.set('views', path.join(__dirname, '../../public'));
     app.set('view engine', 'html');
     app.engine('html', require('ejs').renderFile);
 
@@ -50,9 +50,6 @@ export let bootstrap = (): void => {
 
         // Security configuration
         app.use(flash());
-
-        // Static assets configuration
-        app.use(express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 }));
 
         // Error Handler. Provides full stack - remove for production
         app.use(errorHandler());
