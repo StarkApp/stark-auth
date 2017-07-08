@@ -10,7 +10,6 @@ export class APIController {
     create( @Body({ required: true }) user: UserAttributes) {
         // TODO check if request is valid
         // TODO check is email does not already exist
-        console.log('here..', user);
         return User.save(user);
     }
 }
