@@ -6,7 +6,7 @@ import thinky = require('thinky');
 const { r, type } = thinky();
 
 export interface UserAttributes {
-    identity?: string;
+    id?: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -16,16 +16,16 @@ export interface UserAttributes {
 }
 
 export interface UserDocument extends UserAttributes, thinky.Document<UserDocument, UserModel, UserAttributes> {
-    // To do - regular method declarations
     name(): string;
+    comparePassword: (candidatePassword: string, cb: (err: Error, isMatch: boolean) => void) => void;
 }
 
 export interface UserModel extends thinky.Model<UserDocument, UserModel, UserAttributes> {
-    findByIdentity(identity: string): bluebird.Thenable<UserDocument>;
+    findByEmail(email: string): bluebird.Thenable<UserDocument>;
 }
 
-export const User = thinky().createModel('users', {
-    identity: type.string().required(),
+export const User = thinky().createModel<UserDocument, UserModel, UserAttributes>('users', {
+    id: type.string(),
     firstName: type.string().required(),
     lastName: type.string().required(),
     email: type.string().email().required(),
@@ -35,14 +35,35 @@ export const User = thinky().createModel('users', {
 }, {});
 
 // Indexes
-User.ensureIndex('identity');
+User.ensureIndex('id');
 
-// Static Methods
-function findByIdentity(identity: string): bluebird.Thenable<UserDocument> {
-    return User.getAll(identity, { index: 'identity' }).nth(0).run();
+User.pre('save', function (next) {
+    const user = this;
+    bcrypt.genSalt(10, (err, salt) => {
+        if (err) {
+            return next(err);
+        }
+        bcrypt.hash(user.password, salt, undefined, (err: Error, hash) => {
+            if (err) {
+                return next(err);
+            }
+            user.password = hash;
+            next();
+        });
+    });
+});
+
+// // Static Methods
+// function findByIdentity(identity: string): bluebird.Thenable<UserDocument> {
+//     return User.getAll(identity, { index: 'identity' }).nth(0).run();
+// }
+
+function findByEmail(email: string): bluebird.Thenable<UserDocument> {
+    return User.getAll(email, { index: 'email' }).nth(0).run();
 }
 
-User.defineStatic('findByIdentity', findByIdentity);
+// User.defineStatic('findByIdentity', findByIdentity);
+User.defineStatic('findByEmail', findByEmail);
 
 // Methods
 
@@ -51,5 +72,12 @@ function name(): string {
     return `${self.firstName} ${self.lastName}`.trim();
 }
 
+function comparePassword(candidatePassword: string, cb: (err: Error, isMatch: any) => {}) {
+    bcrypt.compare(candidatePassword, this.password, (err: Error, isMatch: boolean) => {
+        cb(err, isMatch);
+    });
+}
+
 User.define('name', name);
+User.define('comparePassword', comparePassword);
 

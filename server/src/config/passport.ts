@@ -1,9 +1,9 @@
+import { User } from './../models/User';
 import * as passport from 'passport';
 import * as request from 'request';
 import * as passportLocal from 'passport-local';
 import * as _ from 'lodash';
 
-// import { User, UserType } from '../models/User';
 // import { default as User } from '../models/User';
 import { Request, Response, NextFunction } from 'express';
 
@@ -14,29 +14,39 @@ passport.serializeUser<any, any>((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-    // User.findById(id, (err, user) => {
-    //     done(err, user);
-    // });
+    User.get(id)
+        .run()
+        .then(user => {
+            done(undefined, user);
+        })
+        .error(error => {
+            done(error, undefined);
+        });
 });
-
 
 /**
  * Sign in using Email and Password.
  */
 passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-    // User.findOne({ email: email.toLowerCase() }, (err, user: any) => {
-    //     if (err) { return done(err); }
-    //     if (!user) {
-    //         return done(undefined, false, { message: `Email ${email} not found.` });
-    //     }
-    //     user.comparePassword(password, (err: Error, isMatch: boolean) => {
-    //         if (err) { return done(err); }
-    //         if (isMatch) {
-    //             return done(undefined, user);
-    //         }
-    //         return done(undefined, false, { message: 'Invalid email or password.' });
-    //     });
-    // });
+    User.findByEmail(email.toLowerCase())
+        .then(user => {
+            if (!user) {
+                return done(undefined, false, {
+                    message: `Email ${email} not found.`
+                });
+            }
+            user.comparePassword(password, (err: Error, isMatch: boolean) => {
+                if (err) {
+                    return done(err);
+                }
+                if (isMatch) {
+                    return done(undefined, user);
+                }
+                return done(undefined, false, {
+                    message: 'Invalid email or password'
+                });
+            });
+        });
 }));
 
 

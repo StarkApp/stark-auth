@@ -1,5 +1,6 @@
 import { rethinkDB } from './rethinkdb';
 import * as express from 'express';
+import 'reflect-metadata';
 import * as path from 'path';
 import * as compression from 'compression';
 import * as logger from 'morgan';
@@ -18,10 +19,10 @@ export let bootstrap = (): void => {
     dotenv.config({ path: '.env' });
 
     const app = createExpressServer({
-        controllers: [
-            path.join(__dirname, '../controllers', '*.controller.js')
-        ],
-        defaultErrorHandler: false
+        cors: true,
+        controllers: [path.join(__dirname, '../controllers', '*.controller.js')],
+        middlewares: [path.join(__dirname, '../middleware/', '*.middleware.js')],
+        interceptors: [path.join(__dirname, '../interceptors/', '*.interceptor.js')]
     });
 
     // View engine configuration

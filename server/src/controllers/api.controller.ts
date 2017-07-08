@@ -1,20 +1,16 @@
-import { User } from './../models/User';
-import { JsonController, Get, Post } from 'routing-controllers';
+import { UserInterceptor } from './../interceptors';
+import { User, UserAttributes } from './../models/User';
+import { JsonController, Get, Post, Body, UseInterceptor } from 'routing-controllers';
 
 @JsonController('/api')
 export class APIController {
 
-    @Get('/test')
-    test(): string {
-        return 'testing';
-    }
-
-    @Post('/test')
-    create() {
-        return User.save({
-            identity: 'someidentity',
-            email: 'someemail',
-            password: 'somepassword'
-        });
+    @Post('/register')
+    @UseInterceptor(UserInterceptor.sanitize)
+    create( @Body({ required: true }) user: UserAttributes) {
+        // TODO check if request is valid
+        // TODO check is email does not already exist
+        console.log('here..', user);
+        return User.save(user);
     }
 }
