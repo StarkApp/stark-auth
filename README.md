@@ -15,7 +15,7 @@ Seamless authentication gateway integration with passport. Allows microservices 
   - Passport Local
 - RethinkDB
   - Thinky (ORM)
-- _Coming Soon: Angular_
+- Angular
 
 
 ### Contributors
