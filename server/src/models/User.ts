@@ -36,9 +36,12 @@ export const User = thinky().createModel<UserDocument, UserModel, UserAttributes
 
 // Indexes
 User.ensureIndex('id');
+User.ensureIndex('email');
 
 User.pre('save', function (next) {
     const user = this;
+
+    // TODO check if password has changed
     bcrypt.genSalt(10, (err, salt) => {
         if (err) {
             return next(err);
@@ -53,16 +56,15 @@ User.pre('save', function (next) {
     });
 });
 
-// // Static Methods
-// function findByIdentity(identity: string): bluebird.Thenable<UserDocument> {
-//     return User.getAll(identity, { index: 'identity' }).nth(0).run();
-// }
+// Static Methods
 
 function findByEmail(email: string): bluebird.Thenable<UserDocument> {
-    return User.getAll(email, { index: 'email' }).nth(0).run();
+    return User.filter({ email: email })
+        .nth(0)
+        .default(null)
+        .run();
 }
 
-// User.defineStatic('findByIdentity', findByIdentity);
 User.defineStatic('findByEmail', findByEmail);
 
 // Methods

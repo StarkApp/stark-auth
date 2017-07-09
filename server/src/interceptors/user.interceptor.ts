@@ -1,8 +1,5 @@
 import { UserAttributes } from './../models/User';
 import { InterceptorInterface, Action } from 'routing-controllers';
-import * as bcrypt from 'bcrypt-nodejs';
-import * as crypto from 'crypto';
-
 export class UserInterceptor {
 
     /**

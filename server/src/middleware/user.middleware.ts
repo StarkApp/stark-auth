@@ -1,6 +1,4 @@
 import { ExpressMiddlewareInterface } from 'routing-controllers';
-import * as bcrypt from 'bcrypt-nodejs';
-import * as crypto from 'crypto';
 
 export class UserMiddleware {
 
